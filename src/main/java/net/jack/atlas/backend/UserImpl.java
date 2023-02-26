@@ -13,7 +13,7 @@ public class UserImpl {
     private final Atlas atlas;
     private final MySQL mySQL;
     private final MongoDB mongoDB;
-    private Document document;
+    private final Document document;
     private final Scanner scanner;
 
     // Forename, Surname, Address, PostCode, Age, DOB, Emergency Contact, Allergies, Test Results, Medication, Mental Health Info, Current/Past Treatment
@@ -42,17 +42,17 @@ public class UserImpl {
         }
     }
 
+
     public void mySqlInput(Scanner scanner, MySQL mySQL) {
 
     }
 
     public void mongoInput(Scanner scanner) {
 
-        for (int i = 0; i < requestList.length; i++) {
-            String key = requestList[i];
-            request(key);
+        for (String i : requestList) {
+            request(i);
             String value = scanner.nextLine();
-            document.put(key, value);
+            document.put(i, value);
         }
 
         mongoDB.getMongo().insertOne(document);
