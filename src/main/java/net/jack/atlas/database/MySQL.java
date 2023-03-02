@@ -6,14 +6,15 @@ import java.sql.SQLException;
 
 public class MySQL {
 
+    private final String HOST = "localhost";
+    private final int PORT = 3306;
+    private final String DATABASE = "records_db";
+    private final String USERNAME = "root";
+    private final String PASSWORD = "";
+
     private Connection connection;
 
     public void connect() throws SQLException {
-        String DATABASE = "user_data";
-        String USERNAME = "root";
-        int PORT = 3306;
-        String HOST = "localhost";
-        String PASSWORD = "";
         connection = DriverManager.getConnection("jdbc:mysql://" + HOST + ":" + PORT + "/" +
                 DATABASE + "?useSSL=false", USERNAME, PASSWORD);
     }
@@ -36,4 +37,3 @@ public class MySQL {
         }
     }
 }
-

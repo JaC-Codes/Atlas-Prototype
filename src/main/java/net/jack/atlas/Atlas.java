@@ -1,54 +1,45 @@
 package net.jack.atlas;
 
+import net.jack.atlas.backend.Init;
 import net.jack.atlas.backend.UserImpl;
-import net.jack.atlas.database.MongoDB;
 import net.jack.atlas.database.MySQL;
 
-
-import javax.json.Json;
-import javax.json.JsonReader;
-import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.Scanner;
 
 public class Atlas {
 
-    private static final MongoDB mongo = new MongoDB();
+    private static final Init init = new Init();
     private static final MySQL sql = new MySQL();
+    private static final Scanner scanner = new Scanner(System.in);
 
-    protected static Boolean mongoDB;
-    protected static Boolean mySQL;
+    private static Boolean mongoDB;
+    private static Boolean mySQL;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
-        InputStream inputStream;
+        System.out.println(sql.getConnection());
         try {
-            inputStream = Atlas.class.getClassLoader().getResourceAsStream("config.json");
-            JsonReader reader = Json.createReader(inputStream);
-            boolean dbCheck = reader.readObject().getBoolean("MYSQL");
-            reader.close();
-            if (dbCheck) {
-                mySQL = true;
-                mongoDB = false;
-            } else {
-                mongoDB = true;
-                mySQL = false;
-            }
-
+            init.boot(scanner);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            if (mongoDB) {
-                mongo.connect();
-                System.out.println("Connected Successfully");
-            } else {
-                sql.connect();
-            }
+            init.dbSelect();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         new UserImpl();
+    }
+
+    public void setMongoDB(Boolean mongoDB) {
+        Atlas.mongoDB = mongoDB;
+    }
+
+    public void setMySQL(Boolean mySQL) {
+        Atlas.mySQL = mySQL;
     }
 
     public Boolean getSQL() {
