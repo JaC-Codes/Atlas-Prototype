@@ -4,11 +4,12 @@ package net.jack.atlas.backend;
 import net.jack.atlas.Atlas;
 import net.jack.atlas.database.MongoDB;
 import net.jack.atlas.database.MySQL;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import javax.json.*;
 import java.io.*;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class Init {
@@ -18,6 +19,7 @@ public class Init {
     private final Atlas atlas;
 
     private String dbChoice;
+    private String negateDb;
 
 
     public Init() {
@@ -32,9 +34,18 @@ public class Init {
         JsonReader reader = Json.createReader(inputStream);
 
 
-        dbSwitch(scanner, dbChoice);
+        dbSwitch(scanner, dbChoice, negateDb);
+
+
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         boolean dbCheck = reader.readObject().getBoolean("MYSQL");
+
 
 
         if (dbCheck) {
@@ -57,17 +68,19 @@ public class Init {
         }
     }
 
-    public void dbSwitch(Scanner scanner, String dbChoice) {
+    public void dbSwitch(Scanner scanner, String dbChoice, String negateDb) {
         System.out.println("What database would you like to boot up with?");
         System.out.println("Type 'mongo' for MongoDB or 'mysql' for MySql.");
-        String db = scanner.nextLine();
-        switch (db) {
+        dbChoice = scanner.nextLine();
+        switch (dbChoice) {
             case "mongo" -> {
-                setDbChoice(db);
+                setDbChoice("MONGODB");
+                setNegateDb("MYSQL");
                 System.out.println("MongoDB selected.");
             }
             case "mysql" -> {
-                setDbChoice(db);
+                setNegateDb("MONGODB");
+                setDbChoice("MYSQL");
                 System.out.println("MySql selected.");
             }
         }
@@ -79,6 +92,14 @@ public class Init {
 
     public void setDbChoice(String dbChoice) {
         this.dbChoice = dbChoice;
+    }
+
+    public String getNegateDb() {
+        return negateDb;
+    }
+
+    public void setNegateDb(String negateDb) {
+        this.negateDb = negateDb;
     }
 }
 

@@ -9,6 +9,17 @@ import java.util.Scanner;
 
 public class Atlas {
 
+    /*
+
+            *NEED TO DO*
+
+       Add postgresql
+       Fix sql connection issue being null
+       Add boot up configuration to select database
+       Falsify all other db's inside config
+
+     */
+
     private static final Init init = new Init();
     private static final MySQL sql = new MySQL();
     private static final Scanner scanner = new Scanner(System.in);
@@ -17,8 +28,6 @@ public class Atlas {
     private static Boolean mySQL;
 
     public static void main(String[] args) throws SQLException {
-
-        System.out.println(sql.getConnection());
         try {
             init.boot(scanner);
         } catch (Exception e) {

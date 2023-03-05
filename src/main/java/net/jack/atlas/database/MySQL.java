@@ -12,20 +12,23 @@ public class MySQL {
     private final String USERNAME = "root";
     private final String PASSWORD = "";
 
-    private Connection connection;
+    private Connection connection = null;
 
-    public void connect() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:mysql://" + HOST + ":" + PORT + "/" +
-                DATABASE + "?useSSL=false", USERNAME, PASSWORD);
+    public Connection connect() {
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://" + HOST + ":" + PORT + "/" +
+                    DATABASE + "?useSSL=false", USERNAME, PASSWORD);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return connection;
     }
 
     public boolean isConnected() {
         return  connection != null;
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
 
     public void disconnect() {
         if (isConnected()) {

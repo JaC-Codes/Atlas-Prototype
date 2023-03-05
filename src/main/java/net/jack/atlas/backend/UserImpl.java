@@ -22,7 +22,7 @@ public class UserImpl {
 
     String[] requestList = {"forename", "surname", "address", "postcode", "dob", "emergencyContact",
             "allergies", "testResults", "medication", "mentalHealthInfo", "currentTreatment", "pastTreatment"
-    };
+    }; // 11
 
     public UserImpl() throws SQLException {
         this.atlas = new Atlas();
@@ -46,18 +46,43 @@ public class UserImpl {
 
 
     public void mySqlInput(Scanner scanner, MySQL mySql) throws SQLException {
-        PreparedStatement ps = mySql.getConnection().prepareStatement
-                ("INSERT INTO person_records VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-        ps.setString(1, generateId());
-        for (int i = 0; i < requestList.length; i++) {
-            for (int j = 2; j < requestList.length + 2; i++) {
+
+        try {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("INSERT INTO person_records (id,");
+            for (String item : requestList) {
+                sb.append(item);
+                sb.append(",");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            sb.append(") VALUES (");
+
+            for (int i = 0; i < requestList.length + 1; i++) {
+                sb.append("?");
+                if (i < requestList.length) {
+                    sb.append(",");
+                }
+            }
+
+            sb.append(")");
+            String sql = sb.toString();
+
+
+            PreparedStatement ps = mySql.connect().prepareStatement(sql);
+            ps.setString(1, generateId());
+
+            for (int i = 0; i < requestList.length; i++) {
                 request(requestList[i]);
                 String value = scanner.nextLine();
-                ps.setString(j, value);
+                ps.setString(i + 2, value);
             }
-        }
 
-        mySql.disconnect();
+            ps.executeUpdate();
+            mySql.disconnect();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public void mongoInput(Scanner scanner) {
@@ -67,7 +92,6 @@ public class UserImpl {
             String value = scanner.nextLine();
             document.put(i, value);
         }
-
         mongoDB.getMongo().insertOne(document);
 
     }
