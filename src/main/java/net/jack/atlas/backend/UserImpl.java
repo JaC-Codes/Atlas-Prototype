@@ -34,6 +34,11 @@ public class UserImpl {
         init();
     }
 
+    /*
+
+            Need to add multi optional selection
+     */
+
     public void init() throws SQLException {
         if (atlas.getMongoDB()) {
             mongoInput(scanner);

@@ -1,9 +1,12 @@
 package net.jack.atlas;
 
+import net.jack.atlas.backend.DatabaseSettings;
 import net.jack.atlas.backend.Init;
 import net.jack.atlas.backend.UserImpl;
 import net.jack.atlas.database.MySQL;
 
+import javax.xml.crypto.Data;
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -14,33 +17,32 @@ public class Atlas {
             *NEED TO DO*
 
        Add postgresql
-       Fix sql connection issue being null
        Add boot up configuration to select database
        Falsify all other db's inside config
 
      */
 
-    private static final Init init = new Init();
+    private static final Init init;
+
+    static {
+        try {
+            init = new Init();
+        } catch (SQLException | FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static final MySQL sql = new MySQL();
     private static final Scanner scanner = new Scanner(System.in);
 
     private static Boolean mongoDB;
     private static Boolean mySQL;
+    private static Boolean postgreSQL;
 
-    public static void main(String[] args) throws SQLException {
-        try {
-            init.boot(scanner);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws SQLException, FileNotFoundException {
+       //new Init();
 
-        try {
-            init.dbSelect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        new UserImpl();
+       // new UserImpl();
     }
 
     public void setMongoDB(Boolean mongoDB) {
@@ -57,6 +59,18 @@ public class Atlas {
 
     public Boolean getMongoDB() {
         return mongoDB;
+    }
+
+    public Boolean getMySQL() {
+        return mySQL;
+    }
+
+    public Boolean getPostgreSQL() {
+        return postgreSQL;
+    }
+
+    public void setPostgreSQL(Boolean postgreSQL) {
+        Atlas.postgreSQL = postgreSQL;
     }
 }
 

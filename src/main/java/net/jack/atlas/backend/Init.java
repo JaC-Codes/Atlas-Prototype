@@ -4,102 +4,58 @@ package net.jack.atlas.backend;
 import net.jack.atlas.Atlas;
 import net.jack.atlas.database.MongoDB;
 import net.jack.atlas.database.MySQL;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import net.jack.atlas.database.PostgreSQL;
+import org.yaml.snakeyaml.Yaml;
 
-import javax.json.*;
+
 import java.io.*;
 import java.sql.SQLException;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-public class Init {
+public class Init implements DatabaseSettings {
 
     private final MongoDB mongo;
     private final MySQL sql;
     private final Atlas atlas;
+    private final PostgreSQL postgre;
+    private final Yaml yaml;
+    private final Map<String, Object> data;
 
     private String dbChoice;
     private String negateDb;
 
+    InputStream inputStream = new FileInputStream(new File("C:\\Users\\jackc\\Desktop\\Atlas-Prototype\\src\\main\\resources\\database.yml"));
 
-    public Init() {
+
+    public Init() throws SQLException, FileNotFoundException {
+        super();
+        this.yaml = new Yaml();
+        this.data = yaml.load(inputStream);
         this.atlas = new Atlas();
         this.mongo = new MongoDB();
         this.sql = new MySQL();
+        this.postgre = new PostgreSQL();
+
+        databaseSelect();
     }
 
-    public void boot(Scanner scanner) throws IOException {
+    @Override
+    public void databaseSelect() {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> dbMaps = (Map<String, Object>) data.get("Database");
 
-        InputStream inputStream = Atlas.class.getClassLoader().getResourceAsStream("config.json");
-        JsonReader reader = Json.createReader(inputStream);
+        for (Map.Entry<String, Object> entry : dbMaps.entrySet()) {
+            String key = entry.getKey();
+            Object checks = entry.getValue();
 
-
-        dbSwitch(scanner, dbChoice, negateDb);
-
-
-        try {
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        boolean dbCheck = reader.readObject().getBoolean("MYSQL");
-
-
-
-        if (dbCheck) {
-            atlas.setMySQL(true);
-            atlas.setMongoDB(false);
-        } else {
-            atlas.setMySQL(false);
-            atlas.setMongoDB(true);
-        }
-    }
-
-    public void dbSelect() throws SQLException {
-        Boolean mongoDB = atlas.getMongoDB();
-        if (mongoDB) {
-            mongo.connect();
-            System.out.println("MongoDB: Connected Successfully");
-        } else {
-            sql.connect();
-            System.out.println("MySql: Connected Successfully");
-        }
-    }
-
-    public void dbSwitch(Scanner scanner, String dbChoice, String negateDb) {
-        System.out.println("What database would you like to boot up with?");
-        System.out.println("Type 'mongo' for MongoDB or 'mysql' for MySql.");
-        dbChoice = scanner.nextLine();
-        switch (dbChoice) {
-            case "mongo" -> {
-                setDbChoice("MONGODB");
-                setNegateDb("MYSQL");
-                System.out.println("MongoDB selected.");
-            }
-            case "mysql" -> {
-                setNegateDb("MONGODB");
-                setDbChoice("MYSQL");
-                System.out.println("MySql selected.");
+            if (checks.equals(Boolean.TRUE)) {
+                System.out.println(key + ": " + checks);
             }
         }
     }
 
-    public String getDbChoice() {
-        return dbChoice;
-    }
 
-    public void setDbChoice(String dbChoice) {
-        this.dbChoice = dbChoice;
-    }
-
-    public String getNegateDb() {
-        return negateDb;
-    }
-
-    public void setNegateDb(String negateDb) {
-        this.negateDb = negateDb;
-    }
 }
 
