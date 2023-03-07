@@ -31,24 +31,12 @@ public class UserImpl {
         this.document = new Document();
         this.scanner = new Scanner(System.in);
 
-        init();
     }
 
     /*
 
             Need to add multi optional selection
      */
-
-    public void init() throws SQLException {
-        if (atlas.getMongoDB()) {
-            mongoInput(scanner);
-        } else if (atlas.getSQL()) {
-            mySqlInput(scanner, mySql);
-        } else {
-            System.out.println("ERROR: Cannot find boolean values");
-        }
-    }
-
 
     public void mySqlInput(Scanner scanner, MySQL mySql) throws SQLException {
 

@@ -7,6 +7,10 @@ import org.bson.Document;
 
 public class MongoDB {
 
+    public MongoDB() {
+
+    }
+
     private static MongoCollection<Document> collection;
 
     public void connect() {

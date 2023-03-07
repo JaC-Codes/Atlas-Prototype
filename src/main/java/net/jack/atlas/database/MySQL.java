@@ -14,10 +14,15 @@ public class MySQL {
 
     private Connection connection = null;
 
+    public MySQL() {
+
+    }
+
     public Connection connect() {
         try {
             connection = DriverManager.getConnection("jdbc:mysql://" + HOST + ":" + PORT + "/" +
                     DATABASE + "?useSSL=false", USERNAME, PASSWORD);
+            System.out.println("MySQL: Connected Successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }
