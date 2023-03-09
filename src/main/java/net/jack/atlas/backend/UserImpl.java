@@ -2,8 +2,6 @@ package net.jack.atlas.backend;
 
 
 import net.jack.atlas.Atlas;
-import net.jack.atlas.database.MongoDB;
-import net.jack.atlas.database.MySQL;
 import org.bson.Document;
 
 import java.sql.PreparedStatement;
@@ -33,12 +31,7 @@ public class UserImpl {
 
     }
 
-    /*
-
-            Need to add multi optional selection
-     */
-
-    public void mySqlInput(Scanner scanner, MySQL mySql) throws SQLException {
+    public void MySQLInput(Scanner scanner, MySQL mySql) throws SQLException {
 
         try {
 
@@ -78,7 +71,7 @@ public class UserImpl {
         }
     }
 
-    public void mongoInput(Scanner scanner) {
+    public void MongoDBInput(Scanner scanner) {
 
         for (String i : requestList) {
             request(i);
@@ -97,5 +90,13 @@ public class UserImpl {
         UUID uuid = UUID.randomUUID();
         String uuidString = uuid.toString();
         return uuidString;
+    }
+
+    public void routeDirection(Scanner scanner) throws SQLException {
+        if (mySql.isConnected()) {
+            MySQLInput(scanner, mySql);
+      //  } else if (mongoDB.isConnected()) {
+      //      mongoInput(scanner);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package net.jack.atlas.database;
+package net.jack.atlas.backend;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

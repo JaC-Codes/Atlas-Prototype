@@ -1,4 +1,4 @@
-package net.jack.atlas.database;
+package net.jack.atlas.backend;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,6 +24,7 @@ public class MySQL {
                     DATABASE + "?useSSL=false", USERNAME, PASSWORD);
             System.out.println("MySQL: Connected Successfully");
         } catch (SQLException e) {
+            System.out.println("MySQL: Connection failed");
             e.printStackTrace();
         }
 

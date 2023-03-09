@@ -4,7 +4,8 @@ package net.jack.atlas.backend;
 public interface DatabaseSettings {
 
 
-    public void databaseSelect() throws ClassNotFoundException;
+    public void databaseInitialize() throws ClassNotFoundException;
+
 
 
 }
