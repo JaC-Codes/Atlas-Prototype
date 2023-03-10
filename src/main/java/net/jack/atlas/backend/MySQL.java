@@ -14,10 +14,6 @@ public class MySQL {
 
     private Connection connection = null;
 
-    public MySQL() {
-
-    }
-
     public Connection connect() {
         try {
             connection = DriverManager.getConnection("jdbc:mysql://" + HOST + ":" + PORT + "/" +

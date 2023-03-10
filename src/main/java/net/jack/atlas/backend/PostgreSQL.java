@@ -12,6 +12,7 @@ public class PostgreSQL {
     public PostgreSQL() throws SQLException {
     }
 
+
     public Connection connect() {
         try {
             Class.forName("org.postgresql.Driver");

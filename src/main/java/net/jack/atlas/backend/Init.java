@@ -16,34 +16,29 @@ import java.util.Scanner;
 
 public class Init implements DatabaseSettings {
 
-    private final net.jack.atlas.backend.MongoDB MongoDB;
-    private final net.jack.atlas.backend.MySQL MySQL;
-    private final net.jack.atlas.backend.PostgreSQL PostgreSQL;
-    private final Atlas atlas;
+    private final MongoDB MongoDB;
+    private final MySQL MySQL;
+    private final PostgreSQL PostgreSQL;
     private final UserImpl userImpl;
 
     private final Yaml yaml;
     private final Map<String, Object> data;
     private final Scanner scanner;
-
-    private String dbChoice;
-    private String negateDb;
+    private String db = null;
 
     InputStream inputStream = new FileInputStream(new File("C:\\Users\\jackc\\Desktop\\Atlas-Prototype\\src\\main\\resources\\database.yml"));
 
 
     public Init() throws SQLException, FileNotFoundException, ClassNotFoundException {
-        super();
         this.yaml = new Yaml();
         this.scanner = new Scanner(System.in);
         this.data = yaml.load(inputStream);
-        this.atlas = new Atlas();
+
         this.MongoDB = new MongoDB();
         this.userImpl = new UserImpl();
         this.MySQL = new MySQL();
         this.PostgreSQL = new PostgreSQL();
 
-        databaseInitialize();
     }
 
 
@@ -58,17 +53,12 @@ public class Init implements DatabaseSettings {
             Object checks = entry.getValue();
 
             if (checks.equals(Boolean.TRUE)) {
+                setDb(key);
                 try {
                     Class<?> clazz = Class.forName("net.jack.atlas.backend." + key);
                     Object database = clazz.getDeclaredConstructor().newInstance();
                     Method connectMethod = clazz.getDeclaredMethod("connect");
                     connectMethod.invoke(database);
-
-                    Class<?> c2 = Class.forName("net.jack.atlas.backend." + "UserImpl");
-                    Object classInst = c2.getDeclaredConstructor().newInstance();
-                    Method runner = c2.getDeclaredMethod(key + "Input", Scanner.class);
-                    runner.invoke(classInst, scanner);
-
 
                     break;
                 } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException |
@@ -79,6 +69,27 @@ public class Init implements DatabaseSettings {
         }
     }
 
+    public void methodInvoke() {
 
+        String key = getDb();
+        try {
+            Class<?> c2 = Class.forName("net.jack.atlas.backend." + "UserImpl");
+            Object classInst = c2.getDeclaredConstructor().newInstance();
+            Method runner = c2.getDeclaredMethod(key + "Input", Scanner.class);
+            runner.invoke(classInst, scanner);
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException |
+                 IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    public String getDb() {
+        return this.db;
+    }
+
+    public void setDb(String db) {
+        this.db = db;
+    }
 }
 

@@ -4,6 +4,7 @@ package net.jack.atlas.backend;
 import net.jack.atlas.Atlas;
 import org.bson.Document;
 
+import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -11,7 +12,6 @@ import java.util.UUID;
 
 public class UserImpl {
 
-    private final Atlas atlas;
     private final MySQL mySql;
     private final MongoDB mongoDB;
     private final Document document;
@@ -22,8 +22,7 @@ public class UserImpl {
             "allergies", "testResults", "medication", "mentalHealthInfo", "currentTreatment", "pastTreatment"
     }; // 11
 
-    public UserImpl() throws SQLException {
-        this.atlas = new Atlas();
+    public UserImpl() throws SQLException, FileNotFoundException, ClassNotFoundException {
         this.mongoDB = new MongoDB();
         this.mySql = new MySQL();
         this.document = new Document();
@@ -79,7 +78,6 @@ public class UserImpl {
             document.put(i, value);
         }
         mongoDB.getMongo().insertOne(document);
-
     }
 
     public void request(String message) {
@@ -92,11 +90,4 @@ public class UserImpl {
         return uuidString;
     }
 
-    public void routeDirection(Scanner scanner) throws SQLException {
-        if (mySql.isConnected()) {
-            MySQLInput(scanner, mySql);
-      //  } else if (mongoDB.isConnected()) {
-      //      mongoInput(scanner);
-        }
-    }
 }

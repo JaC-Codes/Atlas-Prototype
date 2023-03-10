@@ -9,10 +9,6 @@ public class MongoDB {
 
     MongoClient client = new MongoClient();
 
-    public MongoDB() {
-
-    }
-
     private static MongoCollection<Document> collection;
 
     public void connect() {
