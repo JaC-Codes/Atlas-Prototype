@@ -1,7 +1,6 @@
 package net.jack.atlas.backend;
 
 
-import net.jack.atlas.Atlas;
 import org.bson.Document;
 
 import java.io.FileNotFoundException;
@@ -14,6 +13,10 @@ public class UserImpl {
 
     private final MySQL mySql;
     private final MongoDB mongoDB;
+    private final PostgreSQL postgreSQL;
+    private final MariaDB mariaDB;
+    private final Init init;
+
     private final Document document;
     private final Scanner scanner;
 
@@ -22,16 +25,21 @@ public class UserImpl {
             "allergies", "testResults", "medication", "mentalHealthInfo", "currentTreatment", "pastTreatment"
     }; // 11
 
-    public UserImpl() throws SQLException, FileNotFoundException, ClassNotFoundException {
+    public UserImpl(Init init) throws SQLException, FileNotFoundException, ClassNotFoundException {
         this.mongoDB = new MongoDB();
         this.mySql = new MySQL();
+        this.postgreSQL = new PostgreSQL();
+        this.mariaDB = new MariaDB();
+        this.init = init;
+
         this.document = new Document();
         this.scanner = new Scanner(System.in);
 
     }
 
-    public void MySQLInput(Scanner scanner, MySQL mySql) throws SQLException {
+    public void SQLInput(Scanner scanner) {
 
+        PreparedStatement ps = null;
         try {
 
             StringBuilder sb = new StringBuilder();
@@ -54,17 +62,38 @@ public class UserImpl {
             String sql = sb.toString();
 
 
-            PreparedStatement ps = mySql.connect().prepareStatement(sql);
-            ps.setString(1, generateId());
+
+            String db = init.getKey();
+
+            try {
+            switch (db) {
+                case "MySQL" -> ps = mySql.connect().prepareStatement(sql);
+                case "PostgreSQL" -> ps = postgreSQL.connect().prepareStatement(sql);
+                case "MariaDB" -> ps = mariaDB.connect().prepareStatement(sql);
+            }
+            } catch (Exception e) {
+                e.printStackTrace();
+                }
+
+
+
+            if (ps != null) {
+                ps.setString(1, generateId());
+            }
 
             for (int i = 0; i < requestList.length; i++) {
                 request(requestList[i]);
                 String value = scanner.nextLine();
-                ps.setString(i + 2, value);
+                if (ps != null) {
+                    ps.setString(i + 2, value);
+                }
             }
 
-            ps.executeUpdate();
-            mySql.disconnect();
+            if (ps != null) {
+                ps.executeUpdate();
+            }
+
+
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -78,13 +107,14 @@ public class UserImpl {
             document.put(i, value);
         }
         mongoDB.getMongo().insertOne(document);
+        mongoDB.disconnect();
     }
 
-    public void request(String message) {
+    private void request(String message) {
         System.out.println(message);
     }
 
-    public String generateId() {
+    private String generateId() {
         UUID uuid = UUID.randomUUID();
         String uuidString = uuid.toString();
         return uuidString;

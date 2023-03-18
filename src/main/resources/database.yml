@@ -1,4 +1,6 @@
 Database:
-  PostgreSQL: false
+  PostgreSQL: true
   MySQL: false
-  MongoDB: true
+  MongoDB: false
+  RedisDB: false
+  MariaDB: false

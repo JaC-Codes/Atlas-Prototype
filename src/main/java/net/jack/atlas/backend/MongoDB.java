@@ -21,15 +21,13 @@ public class MongoDB {
         }
     }
 
-   /* public Boolean isConnected() {
-        if (client.getAddress() == null) return false;
-        return null;
-    }
-
-    */
 
     public MongoCollection<Document> getMongo() {
         return collection;
+    }
+
+    public void disconnect() {
+        client.close();
     }
 
 }

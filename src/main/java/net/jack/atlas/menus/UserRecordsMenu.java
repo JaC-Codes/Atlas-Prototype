@@ -47,7 +47,8 @@ public class UserRecordsMenu {
 
         switch (init.getDb()) {
             case "MongoDB" -> mongoIterate();
-            case "MySQL" -> System.out.println("");
+            case "MySQL" -> sqlIterate();
+            case "RedisDB" -> System.out.println("Currently unavailable.");
         }
     }
 
@@ -64,6 +65,10 @@ public class UserRecordsMenu {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void sqlIterate() {
+
     }
     public Init getInit() {
         return init;

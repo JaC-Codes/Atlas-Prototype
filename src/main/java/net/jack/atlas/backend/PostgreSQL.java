@@ -7,26 +7,36 @@ import java.sql.SQLException;
 public class PostgreSQL {
 
 
-    Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/registration", "postgres", "root");
+    Connection connection = null;
 
-    public PostgreSQL() throws SQLException {
+    public PostgreSQL() {
     }
 
 
     public Connection connect() {
         try {
-            Class.forName("org.postgresql.Driver");
-
-            if (connection != null) {
-                System.out.println("PostgreSQL: Connected Successfully");
-            } else {
-                System.out.println("PostgreSQL: Connection failed");
-            }
-        } catch (ClassNotFoundException e) {
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/records_db", "postgres", "root");
+            System.out.println("PostgreSQL: Connected Successfully");
+        } catch (SQLException e) {
+            System.out.println("PostgreSQL: Connection failed");
             e.printStackTrace();
         }
 
         return connection;
 
+    }
+
+    public boolean connected() {
+        return connection != null;
+    }
+
+    public void disconnect() {
+        if (connected()) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

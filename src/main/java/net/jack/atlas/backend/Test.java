@@ -36,4 +36,19 @@ public class Test {
        System.out.println(map);
    }
 
+   public void sumOfMultiples() {
+       int val = 0;
+       for (int i = 0; i < 1000; i++) {
+           if (i % 5 == 0 && i % 3 == 0) {
+               val += i;
+           }
+       }
+       System.out.println(val);
+   }
+
+   public void primeFactors() {
+       long number = 600851475143L;
+
+   }
+
 }

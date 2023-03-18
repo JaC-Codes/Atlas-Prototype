@@ -1,7 +1,6 @@
 package net.jack.atlas.backend;
 
 
-import net.jack.atlas.Atlas;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -14,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Init implements DatabaseSettings {
+public class Init {
 
     private final MongoDB MongoDB;
     private final MySQL MySQL;
@@ -25,6 +24,7 @@ public class Init implements DatabaseSettings {
     private final Map<String, Object> data;
     private final Scanner scanner;
     private String db = null;
+    private String key = null;
 
     InputStream inputStream = new FileInputStream(new File("C:\\Users\\jackc\\Desktop\\Atlas-Prototype\\src\\main\\resources\\database.yml"));
 
@@ -35,21 +35,20 @@ public class Init implements DatabaseSettings {
         this.data = yaml.load(inputStream);
 
         this.MongoDB = new MongoDB();
-        this.userImpl = new UserImpl();
+        this.userImpl = new UserImpl(this);
         this.MySQL = new MySQL();
         this.PostgreSQL = new PostgreSQL();
 
     }
 
 
-    @Override
     public void databaseInitialize() {
         @SuppressWarnings("unchecked")
         Map<String, Object> dbMaps = (Map<String, Object>) data.get("Database");
 
 
         for (Map.Entry<String, Object> entry : dbMaps.entrySet()) {
-            String key = entry.getKey();
+            key = entry.getKey();
             Object checks = entry.getValue();
 
             if (checks.equals(Boolean.TRUE)) {
@@ -71,11 +70,17 @@ public class Init implements DatabaseSettings {
 
     public void methodInvoke() {
 
-        String key = getDb();
+
+        String methodInit = getDb();
+
+        if (methodInit.equals("PostgreSQL")  || (methodInit.equals("MySQL")) || (methodInit.equals("MariaDB"))) {
+            methodInit = "SQL";
+        }
+        System.out.println(methodInit);
         try {
             Class<?> c2 = Class.forName("net.jack.atlas.backend." + "UserImpl");
-            Object classInst = c2.getDeclaredConstructor().newInstance();
-            Method runner = c2.getDeclaredMethod(key + "Input", Scanner.class);
+            Object classInst = c2.getDeclaredConstructor(Init.class).newInstance(this);
+            Method runner = c2.getDeclaredMethod(methodInit + "Input", Scanner.class);
             runner.invoke(classInst, scanner);
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException |
                  IllegalAccessException | InvocationTargetException e) {
@@ -88,8 +93,17 @@ public class Init implements DatabaseSettings {
         return this.db;
     }
 
-    public void setDb(String db) {
+    private void setDb(String db) {
         this.db = db;
+    }
+
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }
 
